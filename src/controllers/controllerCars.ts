@@ -15,7 +15,7 @@ export default class CarController {
 
   public async read(req: Request, res: Response<ICar[]>) {
     const all = await this._service.read();
-    return res.status(200).json(all);
+    return res.status(201).json(all);
   }
 
   public async readOne(

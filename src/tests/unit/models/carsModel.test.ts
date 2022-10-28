@@ -11,7 +11,7 @@ import {
 } from '../../mocks/carsMock';
 import { ErrorTypes } from '../../../Erros/Catalog';
 
-describe('Frame Model', () => {
+describe('Cars Model', () => {
 	const carModel = new CarModel();
 
 	before(() => {

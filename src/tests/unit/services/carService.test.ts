@@ -6,7 +6,7 @@ import CarModel from '../../../models/modelCars';
 import CarService from '../../../services/serviceCars';
 import { carsMock, carsMockWithId, carsMockForChange } from '../../mocks/carsMock';
 
-describe('Frame Service', () => {
+describe('Cars Service', () => {
 	const carModel = new CarModel();
 	const carService = new CarService(carModel);
 
@@ -75,33 +75,29 @@ describe('Frame Service', () => {
 
 	describe('Update Car', () => {
 		it('Success', async () => {
-			sinon.stub(carModel, 'update').resolves(carsMockWithId);
-
-			const updated = await carService.update('any-id', carsMock);
+			const updated = await carService.update(carsMockWithId._id, carsMock);
 
 			expect(updated).to.be.deep.eq(carsMockWithId);
-
-			sinon.restore();
 		})
 		
 		it('Failure - Zod', async () => {
 			let error;
 
 			try {
-				await carService.update('any-id', { INVALID: "OBJECT" })
-			} catch(err) {
+				await carService.update(carsMockWithId._id, carsMock)
+			} catch(err: any) {
 				error = err;
 			}
 
-			expect(error).to.be.instanceOf(ZodError)
+			expect(error.mensage).to.be.instanceOf(ZodError)
 		})
 
-		it('Failure - Frame not Found', async () => {
+		it('Failure - Car not Found', async () => {
 			sinon.stub(carModel, 'update').resolves(null);
 			let error: any;
 
 			try {
-				await carService.update('any-id', carsMock)
+				await carService.update(carsMockWithId._id, carsMock)
 			} catch(err) {
 				error = err;
 			}
