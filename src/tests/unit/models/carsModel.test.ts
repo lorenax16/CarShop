@@ -18,7 +18,7 @@ describe('Cars Model', () => {
 		sinon.stub(Model, 'create').resolves(carsMockWithId);
     sinon.stub(Model, 'find').resolves([carsMock]);
 		sinon.stub(Model, 'findOne').resolves(carsMockWithId);
-		sinon.stub(Model, 'findByIdAndUpdate').resolves(carsMockForChangeWithId);
+		sinon.stub(Model, 'findByIdAndUpdate').resolves(carsMockWithId);
     sinon.stub(Model, 'findOneAndDelete').resolves(carsMockWithId);
 	});
 
@@ -28,15 +28,15 @@ describe('Cars Model', () => {
 
 	describe('creating a cars', () => {
 		it('successfully created', async () => {
-			const newFrame = await carModel.create(carsMock);
-			expect(newFrame).to.be.deep.equal(carsMockWithId);
+			const newCar = await carModel.create(carsMock);
+			expect(newCar).to.be.deep.equal(carsMockWithId);
 		});
 	});
 
   describe('Read cars', () => {
     it('Succes', async () => {
       const cars = await carModel.read();
-      expect(cars).to.be.deep.equal([carsMockWithId]);
+      expect(cars).to.be.deep.equal([carsMock]);
     });
   });
 
@@ -57,13 +57,13 @@ describe('Cars Model', () => {
 	
 	describe('changing a car', () => {
 		it('successfully changed', async () => {
-			const framesChanged = await carModel.update('62cf1fc6498565d94eba52cd', carsMockForChange);
-			expect(framesChanged).to.be.deep.equal(carsMockForChangeWithId);
+			const carChanged = await carModel.update('4edd40c86762e0fb12000003', carsMockWithId);
+			expect(carChanged).to.be.deep.equal(carsMockWithId);
 		});
 	
 		it('_id not found to change', async () => {
 			try {
-				await carModel.update('123ERRADO', carsMockForChange);
+				await carModel.update('123ERRADO', carsMockWithId);
 			} catch (error:any) {
 				expect(error.message).to.be.eq(ErrorTypes.InvalidMongoId);
 			}
@@ -71,8 +71,8 @@ describe('Cars Model', () => {
 	});
   describe('Delete cars', () => {
     it('Success', async () => {
-      const deleted = await carModel.delete(carsMockForChangeWithId._id);
-      expect(deleted).to.be.deep.equal(carsMockForChangeWithId);
+      const deleted = await carModel.delete(carsMockWithId._id);
+      expect(deleted).to.be.deep.equal(carsMockWithId);
     });
 
     it('Error _id not found to change', async () => {

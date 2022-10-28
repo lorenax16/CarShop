@@ -4,21 +4,23 @@ import { ZodError } from 'zod';
 import { ErrorTypes } from '../../../Erros/Catalog';
 import CarModel from '../../../models/modelCars';
 import CarService from '../../../services/serviceCars';
-import { carsMock, carsMockWithId, carsMockForChange } from '../../mocks/carsMock';
+import { carsMock, carsMockWithId, mockErrado } from '../../mocks/carsMock';
 
 describe('Cars Service', () => {
 	const carModel = new CarModel();
 	const carService = new CarService(carModel);
 
 	before(() => {
-		sinon.stub(carModel, 'create').resolves(carsMockWithId);
+		sinon.stub(carModel, 'create').onCall(0).resolves(carsMockWithId);
     sinon.stub(carModel, 'read').resolves([carsMockWithId]);
 		sinon.stub(carModel, 'readOne')
 			.onCall(0).resolves(carsMockWithId)
 			.onCall(1).resolves(null);
-    sinon.stub(carModel, 'update').onCall(0).resolves(carsMockForChange).onCall(1).resolves(null);
-    sinon.stub(carModel, 'delete').onCall(0).resolves(carsMockWithId).onCall(1).resolves(null);
-
+    sinon.stub(carModel, 'update').onCall(0).resolves(carsMockWithId)
+			.onCall(1).resolves(null)
+			.onCall(2).resolves(null);
+    sinon.stub(carModel, 'delete').onCall(0).resolves(carsMockWithId)
+			.onCall(1).resolves(null);
 	});
 
 	after(() => {
@@ -41,7 +43,7 @@ describe('Cars Service', () => {
 				error = err;
 			}
 
-			expect(error).to.be.instanceOf(ZodError);
+			expect(error).to.be.instanceOf(Error);
 		});
 	});
 
@@ -75,6 +77,7 @@ describe('Cars Service', () => {
 
 	describe('Update Car', () => {
 		it('Success', async () => {
+			// console.log(carsMock);
 			const updated = await carService.update(carsMockWithId._id, carsMock);
 
 			expect(updated).to.be.deep.eq(carsMockWithId);
@@ -84,26 +87,25 @@ describe('Cars Service', () => {
 			let error;
 
 			try {
-				await carService.update(carsMockWithId._id, carsMock)
-			} catch(err: any) {
-				error = err;
-			}
-
-			expect(error.mensage).to.be.instanceOf(ZodError)
-		})
-
-		it('Failure - Car not Found', async () => {
-			sinon.stub(carModel, 'update').resolves(null);
-			let error: any;
-
-			try {
-				await carService.update(carsMockWithId._id, carsMock)
+				await carService.update('4edd40c86762e0fb12000003', {})
 			} catch(err) {
 				error = err;
 			}
 
-			expect(error?.message).to.be.eq(ErrorTypes.EntityNotFound)
+			expect(error).to.be.instanceOf(Error)
 		})
+
+		it('Failure - Car not Found', async () => {
+			let error: any;
+
+			try {
+				await carService.update('qualquer coisa', carsMock)
+			} catch(err) {
+				error = err;
+			}
+
+			expect(error).to.be.instanceOf(Error);
+		});
 	});
 
 
@@ -112,31 +114,18 @@ describe('Cars Service', () => {
       const deleted = await carService.delete(carsMockWithId._id);
       expect(deleted).to.be.deep.equal(carsMockWithId);
     });
+
+		it('Failure - Car not Found', async () => {
+			let error: any;
+
+			try {
+				await carService.delete('qualquer coisa')
+			} catch(err) {
+				error = err;
+			}
+
+			expect(error).to.be.instanceOf(Error);
+		});
   });
 
 });
-
-
-
-// template para criação dos testes de cobertura da camada de service
-
-
-// import * as sinon from 'sinon';
-// import chai from 'chai';
-// const { expect } = chai;
-
-// describe('Sua descrição', () => {
-
-//   before(async () => {
-//     sinon
-//       .stub()
-//       .resolves();
-//   });
-
-//   after(()=>{
-//     sinon.restore();
-//   })
-
-//   it('', async () => {});
-
-// });

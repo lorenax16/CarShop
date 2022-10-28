@@ -4,6 +4,7 @@ const carsMock:ICar = {
   model: "Ferrari Maranello",
   year: 1963,
   color: "red",
+  status: true,
   buyValue: 3500000,
   seatsQty: 2,
   doorsQty: 2
@@ -18,6 +19,7 @@ const carsMockForChange:ICar = {
 	model: "Fiat Uno",
   year: 1963,
   color: "blue",
+  status: true,
   buyValue: 3500,
   seatsQty: 4,
   doorsQty: 4
@@ -28,9 +30,20 @@ const carsMockForChangeWithId:ICar & { _id:string } = {
 	...carsMockForChange,
 };
 
+const mockErrado: ICar = {
+  model: "Fiat Uno",
+  year: 1963,
+  color: "blue",
+  status: true,
+  buyValue: 3500,
+  seatsQty: 4,
+  doorsQty: 4
+}
+
 export {
 	carsMock,
 	carsMockWithId,
 	carsMockForChange,
 	carsMockForChangeWithId,
+  mockErrado,
 };
